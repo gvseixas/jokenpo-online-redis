@@ -1,112 +1,83 @@
 Jokenpô Multiplayer (Python + Redis)
 
-Este projeto implementa um jogo de Jokenpô multiplayer via terminal utilizando Redis como mecanismo de sincronização entre dois jogadores.
-Funciona localmente ou entre máquinas diferentes conectadas ao mesmo servidor Redis.
+Este projeto implementa um jogo de Jokenpô (Pedra, Papel e Tesoura) para dois jogadores utilizando Python e Redis.
+A comunicação entre os jogadores é feita por meio de chaves no Redis, permitindo que cada um jogue em máquinas diferentes conectadas ao mesmo servidor.
 
-
-Funcionalidades:
-
-Criação e entrada em salas
-
-Registro automático como Jogador 1 ou Jogador 2
-
-Sincronização entre jogadores usando Redis
-
-Jogadas simultâneas
-
-Determinação automática do vencedor
-
-Suporte a rematch (nova partida)
-
-Limpeza automática das chaves da sala
-
-Timeout para evitar travamentos
-
-Tecnologias
+Requisitos:
 
 Python 3.x
 
-Redis
+Redis em execução
 
-Biblioteca redis para Python
-
-
-
-Instalação:
+Biblioteca redis:
 
 pip install redis
 
-Como executar
-1. Inicie o servidor Redis
+
+Como executar:
+
+Inicie o servidor Redis:
+
 redis-server
 
-2. Execute o jogo
-python jogo.py
 
-Como jogar
+Execute o script:
 
-Escolha entre:
-
-1: Criar sala
-
-2: Entrar em sala
-
-O programa exibirá (ou pedirá) um código de sala, como:
-
-a3f9b12c
+python multiplayer.py
 
 
-Escolha sua jogada:
+Escolha entre criar uma sala ou entrar em uma já existente.
 
-1 = Pedra
+O programa define automaticamente se você será o Jogador 1 ou 2.
 
-2 = Papel
+Faça sua jogada (1 = Pedra, 2 = Papel, 3 = Tesoura) e aguarde o oponente.
 
-3 = Tesoura
+Após o resultado, ambos devem escolher se desejam jogar novamente.
 
-Após o resultado, escolha se deseja jogar novamente:
+Funcionamento:
+Estrutura no Redis
 
-Jogar novamente? (s/n)
+O jogo utiliza chaves para:
 
-Comunicação via Redis
+Registrar jogadores (player1, player2)
 
-O jogo utiliza o Redis para coordenar eventos e sincronizar o estado entre os dois jogadores.
+Armazenar jogadas (jogada:1, jogada:2)
 
-Principais chaves utilizadas:
+Sincronizar etapas do jogo
 
-Chave	Função
-sala:{id}:player1/2	Registro dos jogadores
-sala:{id}:jogada:1/2	Jogadas dos players
-sala:{id}:sync:*	Controle de sincronização
-sala:{id}:rematch:*	Decisão de rematch
-sala:{id}:status	Status geral da sala
+Armazenar decisão de rematch 
 
-A sincronização funciona como uma barreira: cada jogador sinaliza que chegou a uma etapa e aguarda o outro antes de continuar.
+Armazenar status da sala
 
+Todas as chaves possuem timeout para evitar acúmulo de dados.
 
-Estrutura do código:
+Sincronização:
 
-Funções utilitárias: criação/entrada de sala, limpeza e registro de jogadores
+O jogo usa um sistema simples em que cada jogador cria uma chave de sincronização e aguarda a do outro antes de continuar.
+O Jogador 1 é responsável por limpar as chaves de cada etapa.
 
-Sincronização: espera por chaves, barreiras, timeout
+Fluxo do jogo:
 
-Lógica do jogo: registrar jogadas, ler jogada do oponente, determinar vencedor
+Criar/entrar em sala
 
-Loop principal: controla rodadas, exibe resultado e gerencia rematch
+Registrar jogador
 
-Possíveis melhorias
+Sincronizar início da rodada
 
-Interface gráfica (Tkinter ou versão web)
+Cada jogador envia sua jogada
 
-API REST para criação e gerenciamento de partidas
+O código lê a jogada do oponente
 
-Suporte a mais jogadores (torneios)
+Determinação do vencedor
 
-Logs persistentes das partidas
+Ambos confirmam que viram o resultado
 
-Melhor tratamento de desconexão
+Jogador 1 limpa as jogadas
 
+Rematch opcional
+
+Nova rodada ou encerramento
 
 Licença:
 
-Uso livre para fins de estudo e modificações.
+uso para fins educacionais.
